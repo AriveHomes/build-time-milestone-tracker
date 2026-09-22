@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARIVE • Build milestones</title>
+<style>
+:root{font-family:Inter,Arial,sans-serif;color:#202822;background:#f4f6f5;font-size:16px;--green:#377445;--ink:#13221a;--line:#e0e6e1}
+*{box-sizing:border-box}
+body{margin:0}
+a{color:inherit}
+button,input,select{font:inherit}
+button,.button{border:1px solid #d4dcd5;background:white;color:#233b2a;border-radius:7px;padding:10px 14px;cursor:pointer;text-decoration:none;font-size:14px;font-weight:600}
+button:hover,.button:hover{background:#eef5ef}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #76a74a;outline-offset:3px}
+aside{width:224px;position:fixed;inset:0 auto 0 0;background:var(--ink);color:white;padding:36px 22px;display:flex;flex-direction:column}
+.brand{text-decoration:none;font-size:48px;line-height:1;letter-spacing:-3px;font-weight:700;color:#b3d489}
+.brand span{display:block;font-size:12px;letter-spacing:6px;color:white;padding:9px 0 36px 5px}
+.navlabel{font-size:12px;letter-spacing:1.8px;color:#9bab9f;margin:28px 8px 12px}
+.nav{display:flex;justify-content:space-between;gap:8px;padding:12px;text-decoration:none;border-radius:6px;margin-bottom:5px;font-size:15px}
+.nav:hover,.nav.active{background:#294533}
+.nav small{color:#b9cbbb}
+.sidefoot{margin-top:auto;border-top:1px solid #385041;padding-top:24px;font-size:14px;line-height:1.8}
+.sidefoot p{color:#aebeb2}
+.sidefoot strong{font-weight:500}
+main{margin-left:224px;padding:38px 36px;max-width:1900px}
+header,.sectionhead,.actions,.sourcebar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+header{align-items:flex-start}
+h1{font-size:30px;letter-spacing:-.8px;margin:6px 0 8px}
+h2{font-size:20px;letter-spacing:-.3px;margin:0}
+p{line-height:1.6}
+header p{margin:0;color:#637067}
+.eyebrow{font-size:12px!important;letter-spacing:1.6px;font-weight:700;color:#647568;margin:0 0 8px}
+.sourcebar{border-block:1px solid var(--line);padding:12px 0;margin:26px 0 24px;font-size:14px;color:#5a6d5e}
+.sourcebar button{background:none;border:none;padding:6px 10px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px}
+.stat{border:1px solid var(--line);background:white;border-radius:10px;padding:20px 22px;border-top:3px solid #376e43}
+.stat p{margin:0;font-size:14px;color:#5c6c60}
+.stat strong{display:block;font-size:36px;line-height:1.4;letter-spacing:-1px}
+.stat small{font-size:13px;color:#68756b}
+.stat.red{border-top-color:#bb4b40}
+.stat.amber{border-top-color:#c88d30}
+.panel{background:#fff;border:1px solid var(--line);border-radius:10px;margin:24px 0;overflow:hidden}
+.sectionhead{padding:22px}
+.sectionhead label{font-size:14px;color:#5c6c60}
+.sectionhead select{margin-left:8px}
+select,input{padding:10px 12px;border:1px solid #d7dfd9;background:white;border-radius:6px;font-size:14px;color:#24352a}
+#search{min-width:270px;flex:1}
+.filters{padding:0 22px 20px;display:flex;gap:10px}
+.tablewrap{overflow:auto}
+table{border-collapse:collapse;width:100%;text-align:left;white-space:nowrap}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.7px;background:#f4f7f4;color:#627166;padding:14px 18px}
+td{padding:18px;border-top:1px solid #e7ece8;font-size:14px;vertical-align:top}
+td strong{font-size:15px}
+td small{display:block;color:#69766b;font-size:12px;margin-top:6px;max-width:220px;white-space:normal}
+td .actual{color:#376e43}
+.pill{display:inline-block;border-radius:4px;font-size:13px;font-weight:600;padding:5px 8px}
+.late{color:#a73c31;background:#fcf0ed}
+.soon{color:#866019;background:#fcf4df}
+.normal{color:#386447;background:#edf5ef}
+.complete{color:#45614b;background:#eff4f0}
+.deadlinegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line)}
+.deadline{padding:18px 22px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.datebox{background:#eef3ee;border-radius:6px;min-width:53px;padding:8px 6px;text-align:center}
+.datebox b{display:block;font-size:23px}
+.datebox span{font-size:12px;text-transform:uppercase}
+.deadline p{margin:0 0 5px;font-size:14px}
+.deadline small{display:block;color:#657269;font-size:13px;margin:4px 0 9px}
+.empty{padding:30px;color:#68786d;line-height:1.6;text-align:center}
+.supercards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.supercard{display:block;text-decoration:none;background:white;border:1px solid var(--line);border-radius:8px;padding:20px}
+.supercard:hover{border-color:#4f8455}
+.supercard strong{font-size:18px}
+.supercard p{font-size:14px;margin:10px 0;color:#627367}
+.supercard span{font-size:13px}
+.supercard b{float:right;color:var(--green)}
+footer{display:flex;justify-content:space-between;gap:20px;margin-top:26px;color:#738077;font-size:12px;line-height:1.6}
+#message{border:1px solid #d7a550;background:#fff7df;border-radius:6px;padding:14px;margin:12px 0;white-space:pre-line;font-size:14px}
+dialog{border:none;border-radius:12px;max-width:650px;width:calc(100% - 32px);padding:30px;box-shadow:0 16px 70px #0004}
+dialog::backdrop{background:#10271d77}
+dialog label{display:block;font-size:14px;font-weight:600}
+dialog input{display:block;width:100%;margin-top:10px}
+.small{font-size:14px;color:#627166}
+.primary{background:#346b40;color:white}
+.primary:hover{background:#285633}
+[hidden]{display:none!important}
+
+@media(max-width:1150px){
+ aside{width:190px;padding:28px 14px}
+ main{margin-left:190px;padding:28px 22px}
+ header{flex-direction:column}
+ .deadlinegrid{grid-template-columns:repeat(2,1fr)}
+ .supercards{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:720px){
+ aside{position:static;width:100%;padding:16px 20px;display:block}
+ .brand{font-size:32px;display:inline-block}
+ .brand span{font-size:10px;padding:5px 0}
+ .navlabel,.sidefoot{display:none}
+ nav{display:flex;overflow:auto;gap:6px}
+ .nav{display:inline-flex;white-space:nowrap;font-size:14px;padding:10px}
+ .mainnav{margin-left:20px}
+ main{margin:0;padding:24px 16px}
+ .stats{grid-template-columns:repeat(2,1fr);gap:10px}
+ .stat{padding:15px}
+ .stat strong{font-size:30px}
+ .sectionhead{flex-wrap:wrap;padding:18px}
+ .deadlinegrid{grid-template-columns:1fr}
+ .actions{flex-wrap:wrap;justify-content:flex-start}
+ .filters{flex-wrap:wrap;padding:0 18px 18px}
+ #search{min-width:100%;width:100%}
+ .supercards{grid-template-columns:repeat(2,1fr)}
+ h1{font-size:27px}
+ .sourcebar{align-items:flex-start}
+ footer{flex-direction:column}
+ .sourcebar>div{display:flex}
+ .supercard{padding:16px}
+}
+@media print{
+ @page{size:landscape;margin:12mm}
+ body{background:white;font-size:11px}
+ aside,.actions,.sourcebar,.filters,#superSection,dialog,#connect{display:none!important}
+ main{margin:0;padding:0;max-width:none}
+ h1{font-size:24px}
+ .stats{gap:10px;margin:15px 0}
+ .stat{padding:10px}
+ .stat strong{font-size:24px}
+ .panel{overflow:visible;break-inside:auto}
+ .tablewrap{overflow:visible}
+ table{white-space:normal}
+ thead{display:table-header-group}
+ tr{break-inside:avoid}
+ th,td{padding:9px;font-size:11px}
+ td strong{font-size:12px}
+ .deadlinegrid{grid-template-columns:repeat(3,1fr)}
+ .deadline{padding:12px;break-inside:avoid}
+ .sectionhead{padding:14px}
+ .sectionhead label{display:none}
+ footer{font-size:10px}
+ .pill{font-size:11px}
+ #message{font-size:11px}
+}
+</style>
+<script>
+window.ARIVE_CONFIG = {
+  appsScriptUrl: 'https://script.google.com/macros/s/AKfycbxNrdrf0TT4C1Ery_61pEQFw5zox7nYQ0UDk3OdTonQxEy1O9NwEZb8wWpWQp32QwvJ/exec',
+  sheetUrl: 'https://docs.google.com/spreadsheets/d/1R8svP_Kaa0AjF-Grcyb8i4AZm7PZ0FM80smuY5_Pxh0/edit',
+  timeZone: 'America/Denver'
+};
+</script>
+</head>
+<body>
+
+<aside>
+  <a class="brand" href="#">arive<span>HOMES</span></a>
+  <p class="navlabel">CONSTRUCTION</p>
+  <a class="nav mainnav" href="#">Overview</a>
+  <p class="navlabel">SUPERINTENDENTS</p>
+  <nav id="supers"></nav>
+  <div class="sidefoot">
+    <strong>Every phase. One finish line.</strong>
+    <p>150 days · Single-family<br>205 days · Townhomes</p>
+  </div>
+</aside>
+
+<main>
+  <header>
+    <div>
+      <p class="eyebrow">BUILD MILESTONES</p>
+      <h1 id="title">Construction overview</h1>
+      <p id="subtitle">Deadlines from dig to C/O.</p>
+    </div>
+    <div class="actions">
+      <a id="sheetLink" class="button" target="_blank" rel="noopener">Edit homes in Sheets ↗</a>
+      <button id="print">Print / Save PDF</button>
+    </div>
+  </header>
+
+  <div class="sourcebar">
+    <span id="source" role="status">Connecting…</span>
+    <div>
+      <button id="refresh">Refresh</button>
+      <button id="connect">Connection</button>
+    </div>
+  </div>
+
+  <div id="message" role="alert" hidden></div>
+  <section class="stats" id="stats"></section>
+
+  <section class="panel deadlines">
+    <div class="sectionhead">
+      <div>
+        <p class="eyebrow">WHAT NEEDS ATTENTION</p>
+        <h2>Milestone deadlines</h2>
+      </div>
+      <label>Look ahead
+        <select id="horizon">
+          <option value="7">7 days</option>
+          <option value="14" selected>14 days</option>
+          <option value="30">30 days</option>
+          <option value="60">60 days</option>
+        </select>
+      </label>
+    </div>
+    <div id="deadlines"></div>
+  </section>
+
+  <section id="superSection">
+    <div class="sectionhead"><h2>Your superintendents</h2></div>
+    <div class="supercards" id="supercards"></div>
+  </section>
+
+  <section class="panel">
+    <div class="sectionhead">
+      <div>
+        <p class="eyebrow">DIG → 4-WAY → CABINETS → C/O</p>
+        <h2 id="homesTitle">All homes</h2>
+      </div>
+      <div class="actions">
+        <button id="share">Copy page link</button>
+        <button id="csv">Export schedule</button>
+      </div>
+    </div>
+    <div class="filters">
+      <input id="search" type="search" aria-label="Search homes" placeholder="Search home, community or plan">
+      <select id="type" aria-label="Home type">
+        <option value="">All home types</option>
+        <option>Single-family</option>
+        <option>Townhome</option>
+      </select>
+      <select id="status" aria-label="Status">
+        <option value="active">Active homes</option>
+        <option value="all">All homes</option>
+        <option value="complete">Completed homes</option>
+      </select>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Home / lot</th>
+            <th>Superintendent</th>
+            <th>Dig</th>
+            <th>4-way</th>
+            <th>Cabinets</th>
+            <th>C/O goal</th>
+            <th>Next milestone</th>
+          </tr>
+        </thead>
+        <tbody id="homes"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <span id="asof"></span>
+    <span>Calendar days · Targets stay anchored to dig date · Actual dates shown below targets</span>
+  </footer>
+</main>
+
+<dialog id="settings">
+  <form id="connectionForm">
+    <h2>Connect Google Sheets</h2>
+    <p>Paste your Apps Script Web app URL ending in <strong>/exec</strong>. Your records stay in Google Sheets.</p>
+    <label>Apps Script Web app URL
+      <input id="appsScriptUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec">
+    </label>
+    <p class="small">Add the same URL near the top of index.html in GitHub so every superintendent connects automatically.</p>
+    <div class="actions">
+      <button type="button" id="demo">Preview sample homes</button>
+      <button type="button" id="cancel">Cancel</button>
+      <button class="primary" type="submit">Connect</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(function(root){
+  const DAY=86400000;
+  const offsets={
+    'Single-family':[63,111,150],
+    'Townhome':[100,160,205]
+  };
+
+  function parseDate(v){
+    if(!v)return null;
+    let m=String(v).trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if(!m){
+      const a=String(v).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if(a)m=[a[0],a[3],a[1],a[2]];
+    }
+    if(!m)return null;
+    const n=Date.UTC(+m[1],+m[2]-1,+m[3]);
+    const d=new Date(n);
+    return d.getUTCFullYear()===+m[1]&&
+      d.getUTCMonth()===+m[2]-1&&
+      d.getUTCDate()===+m[3]?n:null;
+  }
+
+  const iso=n=>new Date(n).toISOString().slice(0,10);
+
+  function csv(text){
+    let rows=[],row=[],cell='',q=false;
+    for(let i=0;i<text.length;i++){
+      let c=text[i];
+      if(c==='"'){
+        if(q&&text[i+1]==='"'){cell+='"';i++;}
+        else q=!q;
+      }else if(c===','&&!q){
+        row.push(cell);cell='';
+      }else if((c==='\n'||c==='\r')&&!q){
+        if(c==='\r'&&text[i+1]==='\n')i++;
+        row.push(cell);rows.push(row);row=[];cell='';
+      }else cell+=c;
+    }
+    if(q)throw Error('The data contains an unfinished quoted field.');
+    if(cell||row.length){row.push(cell);rows.push(row);}
+    return rows;
+  }
+
+  function read(text){
+    const rows=csv(text);
+    const names=[
+      'Home / lot','Community','Plan','Superintendent',
+      'Home type','Dig date','4-way actual',
+      'Cabinets actual','C/O actual','Notes'
+    ];
+    const header=(rows.shift()||[]).map(x=>x.replace(/^\uFEFF/,'').trim());
+    const ix=names.map(n=>header.indexOf(n));
+    if(ix.some(n=>n<0)){
+      throw Error('The Homes tab is missing required columns. Check its header row in Google Sheets.');
+    }
+    let errors=[],homes=[];
+    rows.forEach((row,i)=>{
+      if(!row.some(x=>x.trim()))return;
+      let a=ix.map(n=>(row[n]||'').trim());
+      if(!a.some(Boolean))return;
+
+      const [name,community,plan,superName,type,dig,four,cabinets,co,notes]=a;
+      const d=parseDate(dig);
+
+      if(!name||!superName||!offsets[type]||d===null){
+        errors.push(`Row ${i+2}: check home, superintendent, home type and dig date.`);
+        return;
+      }
+
+      const actual=[four,cabinets,co].map(parseDate);
+      if([four,cabinets,co].some((v,j)=>v&&actual[j]===null)){
+        errors.push(`Row ${i+2}: invalid actual date.`);
+        return;
+      }
+
+      let prior=d;
+      if(actual.some(v=>{
+        if(v===null)return false;
+        const bad=v<prior;
+        prior=v;
+        return bad;
+      })){
+        errors.push(`Row ${i+2}: actual dates are out of order or before dig.`);
+        return;
+      }
+
+      if((co&&(!four||!cabinets))||(cabinets&&!four)){
+        errors.push(`Row ${i+2}: enter earlier milestone actual dates first.`);
+        return;
+      }
+
+      homes.push({
+        name,community,plan,super:superName,type,dig:d,
+        actual,notes,targets:offsets[type].map(n=>d+n*DAY)
+      });
+    });
+    return {homes,errors};
+  }
+
+  function pending(h){
+    return h.targets
+      .map((date,i)=>({date,i,home:h}))
+      .filter(x=>h.actual[x.i]===null);
+  }
+
+  function status(date,today){
+    const d=Math.round((date-today)/DAY);
+    return {
+      days:d,
+      label:d<0?`${-d}d overdue`:d===0?'Due today':`In ${d}d`,
+      className:d<0?'late':d<=7?'soon':'normal'
+    };
+  }
+
+  root.Arive={DAY,offsets,parseDate,iso,csv,read,pending,status};
+})(window);
+
+const C=window.ARIVE_CONFIG;
+const A=window.Arive;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[c]));
+
+let homes=[],demo=false,loaded=false,lastSync=null,loadSeq=0;
+
+function stored(k){
+  try{return localStorage.getItem(k)||'';}catch{return '';}
+}
+function save(k,v){
+  try{localStorage.setItem(k,v);}catch{}
+}
+
+let appsScriptUrl=C.appsScriptUrl||stored('arive-milestones-apps-script');
+const names=['4-way','Cabinets','C/O'];
+
+function today(){
+  const parts=new Intl.DateTimeFormat('en-US',{
+    timeZone:C.timeZone,year:'numeric',month:'2-digit',day:'2-digit'
+  }).formatToParts(new Date());
+  const g=t=>parts.find(x=>x.type===t).value;
+  return A.parseDate(`${g('year')}-${g('month')}-${g('day')}`);
+}
+
+const fmt=(n,year=false)=>new Intl.DateTimeFormat('en-US',{
+  timeZone:'UTC',month:'short',day:'numeric',
+  ...(year?{year:'numeric'}:{})
+}).format(new Date(n));
+
+function selected(){
+  try{return new URLSearchParams(location.hash.slice(1)).get('super')||'';}
+  catch{return '';}
+}
+
+function message(v){
+  $('#message').textContent=v;
+  $('#message').hidden=!v;
+}
+
+function sample(){
+  const t=today(),d=n=>A.iso(t+n*A.DAY);
+  const rows=[
+    ['EXAMPLE 101','Sample community','Julia','Greg','Single-family',d(-58),'','','',''],
+    ['EXAMPLE 102','Sample community','Stockton','Greg','Single-family',d(-116),d(-53),'','',''],
+    ['EXAMPLE 201','Sample townhomes','Vista','Manuel','Townhome',d(-94),'','','',''],
+    ['EXAMPLE 202','Sample townhomes','Vista','Manuel','Townhome',d(-166),d(-66),'','',''],
+    ['EXAMPLE 301','Sample community','Emily','Deryck','Single-family',d(-144),d(-83),d(-36),'',''],
+    ['EXAMPLE 401','Sample townhomes','Vista','Burke','Townhome',d(-201),d(-103),d(-45),'',''],
+    ['EXAMPLE 302','Sample community','Julia','Deryck','Single-family',d(-8),'','','','']
+  ];
+  return A.read([
+    'Home / lot,Community,Plan,Superintendent,Home type,Dig date,4-way actual,Cabinets actual,C/O actual,Notes',
+    ...rows.map(r=>r.join(','))
+  ].join('\n')).homes;
+}
+
+function visible(){
+  const q=$('#search').value.toLowerCase();
+  const type=$('#type').value;
+  const status=$('#status').value;
+  return homes.filter(h=>
+    (!selected()||h.super===selected())&&
+    (!type||h.type===type)&&
+    (status==='all'||(
+      status==='complete'?h.actual[2]!==null:h.actual[2]===null
+    ))&&
+    [h.name,h.community,h.plan,h.super,h.notes]
+      .join(' ').toLowerCase().includes(q)
+  ).sort((a,b)=>
+    (A.pending(a)[0]?.date??Infinity)-
+    (A.pending(b)[0]?.date??Infinity)||
+    a.name.localeCompare(b.name)
+  );
+}
+
+function render(){
+  const t=today(),superName=selected();
+  const scoped=homes.filter(h=>!superName||h.super===superName);
+  const active=scoped.filter(h=>h.actual[2]===null);
+  const tasks=active.flatMap(A.pending);
+  const late=tasks.filter(x=>x.date<t);
+  const due=tasks.filter(x=>x.date>=t&&x.date<=t+7*A.DAY);
+  const supers=[...new Set(homes.map(h=>h.super))].sort();
+
+  $('#title').textContent=superName?
+    `${superName}’s build schedule`:'Construction overview';
+  $('#subtitle').textContent=superName?
+    'Dig dates, milestone targets and actual completions.':
+    'Deadlines from dig to C/O.';
+  $('#homesTitle').textContent=superName?
+    `${superName}’s homes`:'All homes';
+  document.title=`ARIVE • ${superName||'Build milestones'}`;
+  $('.mainnav').classList.toggle('active',!superName);
+  $('#superSection').hidden=!!superName;
+
+  $('#supers').innerHTML=supers.map(s=>`
+    <a class="nav ${s===superName?'active':''}"
+       href="#super=${encodeURIComponent(s)}">
+      <span>${esc(s)}</span>
+      <small>${homes.filter(h=>h.super===s&&h.actual[2]===null).length}</small>
+    </a>
+  `).join('')||'<p class="small">Add a home to see supers.</p>';
+
+  const cards=[
+    ['Active homes',active.length,'Homes working toward C/O',''],
+    ['Overdue milestones',late.length,'Incomplete targets before today','red'],
+    ['Due in 7 days',due.length,'Including today','amber'],
+    ['C/O in 30 days',
+      active.filter(h=>h.targets[2]>=t&&h.targets[2]<=t+30*A.DAY).length,
+      'Upcoming finish-line goals','']
+  ];
+
+  $('#stats').innerHTML=cards.map(x=>`
+    <div class="stat ${x[3]}">
+      <p>${x[0]}</p>
+      <strong>${loaded?x[1]:'—'}</strong>
+      <small>${x[2]}</small>
+    </div>
+  `).join('');
+
+  const horizon=+$('#horizon').value;
+  const deadline=tasks
+    .filter(x=>x.date<=t+horizon*A.DAY)
+    .sort((a,b)=>a.date-b.date||a.home.name.localeCompare(b.home.name));
+
+  $('#deadlines').innerHTML=deadline.length?
+    `<div class="deadlinegrid">${deadline.map(x=>{
+      const s=A.status(x.date,t);
+      const month=new Date(x.date).toLocaleString('en-US',{
+        month:'short',timeZone:'UTC'
+      });
+      return `
+        <div class="deadline">
+          <div class="datebox">
+            <span>${month}</span>
+            <b>${new Date(x.date).getUTCDate()}</b>
+          </div>
+          <div>
+            <p><strong>${esc(x.home.name)}</strong> · ${names[x.i]}</p>
+            <small>${esc(x.home.community)} · ${esc(x.home.super)} · ${new Date(x.date).getUTCFullYear()}</small>
+            <span class="pill ${s.className}">${s.label}</span>
+          </div>
+        </div>`;
+    }).join('')}</div>`:
+    `<div class="empty">${
+      loaded?'No incomplete milestones due in this window.':
+      'Connect your Google Sheet to load deadlines, or preview the sample homes.'
+    }</div>`;
+
+  $('#supercards').innerHTML=supers.map(s=>{
+    const a=homes.filter(h=>h.super===s&&h.actual[2]===null);
+    const l=a.flatMap(A.pending).filter(x=>x.date<t).length;
+    return `
+      <a class="supercard" href="#super=${encodeURIComponent(s)}">
+        <strong>${esc(s)}</strong><b>↗</b>
+        <p>${a.length} active homes</p>
+        <span class="pill ${l?'late':'normal'}">
+          ${l?`${l} overdue milestones`:'No overdue milestones'}
+        </span>
+      </a>`;
+  }).join('')||'<div class="empty">Superintendent pages appear as you add homes.</div>';
+
+  $('#homes').innerHTML=visible().map(h=>{
+    const next=A.pending(h)[0];
+    const s=next?A.status(next.date,t):null;
+    const cells=h.targets.map((d,i)=>{
+      let detail=`<small>Day ${A.offsets[h.type][i]}</small>`;
+      if(h.actual[i]!==null){
+        const delta=Math.round((h.actual[i]-d)/A.DAY);
+        const variance=delta>0?`${delta}d late`:
+          delta===0?'On target':`${-delta}d early`;
+        detail=`<small class="actual">✓ Actual ${fmt(h.actual[i],true)}<br>${variance}</small>`;
+      }
+      return `<td>${fmt(d,true)}${detail}</td>`;
+    }).join('');
+
+    return `
+      <tr>
+        <td>
+          <strong>${esc(h.name)}</strong>
+          <small>${esc(h.community)}${h.plan?' · '+esc(h.plan):''}</small>
+          <small>${esc(h.type)}${h.notes?' · '+esc(h.notes):''}</small>
+        </td>
+        <td><a href="#super=${encodeURIComponent(h.super)}">${esc(h.super)}</a></td>
+        <td>${fmt(h.dig,true)}</td>
+        ${cells}
+        <td>${next?
+          `${names[next.i]}<small><span class="pill ${s.className}">${s.label}</span></small>`:
+          '<span class="pill complete">Complete</span>'
+        }</td>
+      </tr>`;
+  }).join('')||`
+    <tr><td colspan="7" class="empty">${
+      loaded?'No homes match this view. Add or update homes in Google Sheets.':
+      'Your homes will appear here once connected.'
+    }</td></tr>`;
+
+  $('#source').textContent=demo?
+    'SAMPLE PREVIEW · Fictional homes, not live records':
+    lastSync?`Google Sheets · Last loaded ${
+      lastSync.toLocaleTimeString([],{
+        hour:'numeric',minute:'2-digit'
+      })
+    }`:'Google Sheets · Not connected';
+
+  $('#asof').textContent=
+    `${demo?'SAMPLE DATA · ':''}Schedule as of ${fmt(t,true)} · Mountain time`;
+}
+
+function validUrl(url){
+  const u=new URL(url);
+  if(
+    u.protocol!=='https:'||
+    u.hostname!=='script.google.com'||
+    !/^\/macros\/s\/[a-zA-Z0-9_-]+\/exec$/.test(u.pathname)
+  ){
+    throw Error('Paste the Apps Script Web app URL ending in /exec.');
+  }
+  u.search='';
+  u.hash='';
+  return u;
+}
+
+function requestScript(url){
+  return new Promise((resolve,reject)=>{
+    const u=validUrl(url);
+    const callback='arive_cb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    const script=document.createElement('script');
+    let timer;
+
+    function clean(){
+      clearTimeout(timer);
+      script.remove();
+      delete window[callback];
+    }
+
+    window[callback]=data=>{
+      clean();
+      resolve(data);
+    };
+
+    script.onerror=()=>{
+      clean();
+      reject(Error('Could not load Apps Script. Check the deployment URL and access setting.'));
+    };
+
+    timer=setTimeout(()=>{
+      clean();
+      reject(Error('Apps Script timed out. Deploy as a Web app, execute as Me, with access set to Anyone.'));
+    },25000);
+
+    u.searchParams.set('callback',callback);
+    u.searchParams.set('_',Date.now());
+    script.src=u.href;
+    document.head.appendChild(script);
+  });
+}
+
+async function load(){
+  const seq=++loadSeq;
+  if(!appsScriptUrl){render();return;}
+
+  $('#refresh').disabled=true;
+  $('#source').textContent='Loading Google Sheets through Apps Script…';
+
+  try{
+    const data=await requestScript(appsScriptUrl);
+    if(!data||data.ok!==true){
+      throw Error(data?.error||'Unexpected Apps Script response.');
+    }
+    if(
+      !Array.isArray(data.headers)||
+      !Array.isArray(data.rows)||
+      !data.rows.every(Array.isArray)
+    ){
+      throw Error('Unexpected data format. Use the supplied Apps Script code.');
+    }
+
+    const quote=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+    const text=[data.headers,...data.rows]
+      .map(row=>row.map(quote).join(',')).join('\n');
+    const result=A.read(text);
+
+    if(seq!==loadSeq)return;
+
+    homes=result.homes;
+    demo=false;
+    loaded=true;
+    lastSync=new Date();
+
+    message(result.errors.length?
+      `Some rows need attention and are excluded from totals:\n${result.errors.join('\n')}`:
+      ''
+    );
+    render();
+  }catch(e){
+    if(seq!==loadSeq)return;
+    message(`Could not refresh: ${e.message}${
+      loaded?' The previously displayed records are still shown; they may be out of date.':''
+    }`);
+    render();
+  }finally{
+    if(seq===loadSeq)$('#refresh').disabled=false;
+  }
+}
+
+$('#sheetLink').href=C.sheetUrl;
+
+$('#connect').onclick=()=>{
+  $('#appsScriptUrl').value=appsScriptUrl;
+  $('#settings').showModal();
+};
+
+$('#cancel').onclick=()=>$('#settings').close();
+
+$('#connectionForm').onsubmit=e=>{
+  e.preventDefault();
+  try{
+    validUrl($('#appsScriptUrl').value.trim());
+  }catch(err){
+    $('#appsScriptUrl').setCustomValidity(err.message);
+    $('#appsScriptUrl').reportValidity();
+    return;
+  }
+  appsScriptUrl=$('#appsScriptUrl').value.trim();
+  save('arive-milestones-apps-script',appsScriptUrl);
+  $('#settings').close();
+  load();
+};
+
+$('#appsScriptUrl').oninput=()=>{
+  $('#appsScriptUrl').setCustomValidity('');
+};
+
+$('#demo').onclick=()=>{
+  loadSeq++;
+  $('#refresh').disabled=false;
+  homes=sample();
+  demo=true;
+  loaded=true;
+  lastSync=null;
+  $('#settings').close();
+  message('Sample preview only. These homes are fictional and are not saved to your Google Sheet.');
+  render();
+};
+
+$('#refresh').onclick=()=>{
+  if(demo){
+    $('#appsScriptUrl').value=appsScriptUrl;
+    $('#settings').showModal();
+  }else load();
+};
+
+$('#print').onclick=()=>window.print();
+
+['search','type','status','horizon'].forEach(id=>{
+  $('#'+id).addEventListener(id==='search'?'input':'change',render);
+});
+
+window.addEventListener('hashchange',()=>{
+  $('#search').value='';
+  $('#type').value='';
+  render();
+});
+
+$('#share').onclick=async()=>{
+  try{
+    await navigator.clipboard.writeText(location.href);
+    $('#share').textContent='Link copied';
+    setTimeout(()=>$('#share').textContent='Copy page link',2000);
+  }catch{
+    message('Copy the address from your browser to share this superintendent page.');
+  }
+};
+
+$('#csv').onclick=()=>{
+  const safe=v=>'"'+String(v??'')
+    .replace(/^[=+@-]/,"'$&")
+    .replace(/"/g,'""')+'"';
+
+  const rows=[
+    [
+      'Home / lot','Community','Plan','Superintendent','Home type',
+      'Dig date','4-way target','4-way actual',
+      'Cabinets target','Cabinets actual',
+      'C/O target','C/O actual','Notes'
+    ],
+    ...visible().map(h=>[
+      h.name,h.community,h.plan,h.super,h.type,A.iso(h.dig),
+      A.iso(h.targets[0]),h.actual[0]===null?'':A.iso(h.actual[0]),
+      A.iso(h.targets[1]),h.actual[1]===null?'':A.iso(h.actual[1]),
+      A.iso(h.targets[2]),h.actual[2]===null?'':A.iso(h.actual[2]),
+      h.notes
+    ])
+  ];
+
+  const blob=new Blob([
+    '\uFEFF'+rows.map(r=>r.map(safe).join(',')).join('\r\n')
+  ],{type:'text/csv;charset=utf-8'});
+
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url;
+  link.download=`${demo?'SAMPLE-':''}Arive-${selected()||'All'}-${A.iso(today())}.csv`;
+  link.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+
+render();
+load();
+
+setInterval(()=>{
+  if(!demo&&appsScriptUrl&&!document.hidden)load();
+  else render();
+},300000);
+</script>
+</body>
+</html>
