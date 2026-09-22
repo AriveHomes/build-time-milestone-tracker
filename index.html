@@ -811,5 +811,205 @@ setInterval(()=>{
   else render();
 },300000);
 </script>
+ <!-- MILESTONE VISIBILITY -->
+<style>
+.milestone-controls{
+  display:flex;align-items:center;flex-wrap:wrap;gap:14px;
+  padding:16px 20px;background:#fff;border:1px solid #dbe4dc;
+  border-radius:8px;margin:0 0 20px;font-size:14px
+}
+.milestone-controls label{
+  display:flex;align-items:center;gap:6px;cursor:pointer
+}
+.milestone-controls input{
+  accent-color:#377445;width:18px;height:18px
+}
+.milestone-controls small{
+  flex-basis:100%;color:#647568;font-size:13px
+}
+.stats.milestone-three{
+  grid-template-columns:repeat(3,minmax(0,1fr))
+}
+@media(max-width:720px){
+  .stats.milestone-three{
+    grid-template-columns:repeat(2,minmax(0,1fr))
+  }
+}
+@media print{
+  .milestone-controls{padding:8px 0;border:0;margin:0}
+  .milestone-controls label,.milestone-controls strong{
+    display:none
+  }
+}
+</style>
+
+<script>
+(function(){
+  const labels=['4-way','Cabinets','C/O'];
+  const fullPending=A.pending;
+  const originalRender=render;
+
+  function selection(){
+    const p=new URLSearchParams(location.hash.slice(1));
+    if(!p.has('milestones'))return [0,1,2];
+    const raw=p.get('milestones').split(',');
+    const chosen=[0,1,2].filter(i=>raw.includes(String(i)));
+    return chosen.length?chosen:[0,1,2];
+  }
+
+  const controls=document.createElement('div');
+  controls.className='milestone-controls';
+  controls.innerHTML=
+    '<strong>Show milestones:</strong>'+
+    labels.map((name,i)=>
+      '<label><input type="checkbox" value="'+i+'">'+name+'</label>'
+    ).join('')+
+    '<small id="milestone-note"></small>';
+
+  document.querySelector('.sourcebar').after(controls);
+
+  A.pending=h=>fullPending(h).filter(task=>
+    selection().includes(task.i)
+  );
+
+  render=function(){
+    originalRender();
+    const chosen=selection();
+
+    controls.querySelectorAll('input').forEach(box=>{
+      box.checked=chosen.includes(Number(box.value));
+      box.disabled=box.checked&&chosen.length===1;
+    });
+
+    document.querySelector('#milestone-note').textContent=
+      'Showing '+chosen.map(i=>labels[i]).join(' + ')+
+      ' · Dig dates always shown · Deadline counts reflect selected milestones';
+
+    const table=document.querySelector('#homes').closest('table');
+
+    table.querySelectorAll('tr').forEach(row=>{
+      if(row.cells.length===7){
+        [0,1,2].forEach(i=>{
+          row.cells[i+3].hidden=!chosen.includes(i);
+        });
+      }else if(row.cells.length===1){
+        row.cells[0].colSpan=4+chosen.length;
+      }
+    });
+
+    const rows=document.querySelector('#homes').querySelectorAll('tr');
+
+    visible().forEach((home,index)=>{
+      if(!A.pending(home).length&&home.actual[2]===null){
+        rows[index].cells[6].textContent=
+          'Selected milestones complete';
+      }
+    });
+
+    const stats=document.querySelector('#stats');
+    stats.children[3].hidden=!chosen.includes(2);
+    stats.classList.toggle(
+      'milestone-three',
+      !chosen.includes(2)
+    );
+
+    document.querySelector('#homesTitle')
+      .previousElementSibling.textContent=
+      'DIG → '+chosen.map(i=>labels[i].toUpperCase()).join(' → ');
+
+    document.querySelectorAll('a[href^="#"]').forEach(link=>{
+      const params=new URLSearchParams(
+        link.getAttribute('href').slice(1)
+      );
+      if(chosen.length===3){
+        params.delete('milestones');
+      }else{
+        params.set('milestones',chosen.join(','));
+      }
+      link.setAttribute('href','#'+params.toString());
+    });
+  };
+
+  controls.addEventListener('change',()=>{
+    const chosen=Array.from(
+      controls.querySelectorAll('input:checked')
+    ).map(box=>Number(box.value));
+
+    if(!chosen.length)return;
+
+    const params=new URLSearchParams(location.hash.slice(1));
+
+    if(chosen.length===3){
+      params.delete('milestones');
+    }else{
+      params.set('milestones',chosen.join(','));
+    }
+
+    history.replaceState(
+      null,'',
+      location.pathname+location.search+'#'+params.toString()
+    );
+
+    render();
+  });
+
+  document.querySelector('#csv').onclick=()=>{
+    const chosen=selection();
+    const header=[
+      'Home / lot','Community','Plan',
+      'Superintendent','Home type','Dig date'
+    ];
+
+    chosen.forEach(i=>{
+      header.push(labels[i]+' target',labels[i]+' actual');
+    });
+    header.push('Notes');
+
+    const rows=[header,...visible().map(home=>{
+      const row=[
+        home.name,home.community,home.plan,
+        home.super,home.type,A.iso(home.dig)
+      ];
+
+      chosen.forEach(i=>{
+        row.push(
+          A.iso(home.targets[i]),
+          home.actual[i]===null?'':A.iso(home.actual[i])
+        );
+      });
+
+      row.push(home.notes);
+      return row;
+    })];
+
+    const quote=value=>'"'+String(value??'')
+      .replace(/^[=+@-]/,"'$&")
+      .replace(/"/g,'""')+'"';
+
+    const blob=new Blob([
+      '\uFEFF'+rows.map(row=>row.map(quote).join(',')).join('\r\n')
+    ],{type:'text/csv;charset=utf-8'});
+
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement('a');
+    link.href=url;
+    link.download=
+      (demo?'SAMPLE-':'')+'Arive-'+
+      (selected()||'All')+'-'+A.iso(today())+'.csv';
+    link.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  };
+
+  ['search','type','status','horizon'].forEach(id=>{
+    document.querySelector('#'+id).addEventListener(
+      id==='search'?'input':'change',
+      ()=>render()
+    );
+  });
+
+  window.addEventListener('hashchange',()=>render());
+  render();
+})();
+</script>
 </body>
 </html>
